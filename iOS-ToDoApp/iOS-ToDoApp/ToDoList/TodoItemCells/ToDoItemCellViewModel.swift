@@ -6,9 +6,9 @@
 //
 
 class ToDoItemCellViewModel: ReusableViewModelType {
-    var task: Task
+    var task: TodoTask
 
-    init(task: Task) {
+    init(task: TodoTask) {
         self.task = task
     }
 }

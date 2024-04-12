@@ -9,7 +9,7 @@ import Combine
 import UIKit
 
 protocol CellDelegate: AnyObject {
-    func updateTask(task: Task, indexPath: IndexPath?)
+    func updateTask(task: TodoTask, indexPath: IndexPath?)
     func deleteTask(indexPath: IndexPath?)
     func animateKeyboard(up: Bool, indexPath: IndexPath?)
     func reloadCollectionView()
@@ -48,7 +48,7 @@ class ToDoItemCell: UICollectionViewCell,
 
     private var checkImage: CheckBox?
 
-    private let itemContent = UITextView()
+    private let taskTitle = UITextView()
 
     private let deleteButton = UIButton()
 
@@ -60,6 +60,21 @@ class ToDoItemCell: UICollectionViewCell,
         layer.cornerRadius = 16.0
         backgroundColor = .white
 
+        // Check Box Setup
+        checkImage = CheckBox(isSelected: todoItemCellViewModel.task.done)
+        if let checkImage {
+            contentView.addSubview(checkImage)
+        }
+
+        // Task Title Setup
+        taskTitle.delegate = self
+        taskTitle.isScrollEnabled = true
+        taskTitle.backgroundColor = .clear
+        taskTitle.text = todoItemCellViewModel.task.title
+        updateTextColor(isSelected: todoItemCellViewModel.task.done)
+        contentView.addSubview(taskTitle)
+
+        // Delete Button Setup
         let deleteImage = UIImage(systemName: "trash")?
             .withTintColor(
                 .lightGray,
@@ -73,51 +88,35 @@ class ToDoItemCell: UICollectionViewCell,
         )
         contentView.addSubview(deleteButton)
 
-        let isSelected = todoItemCellViewModel.task.status == .Todo ? false : true
-
-        itemContent.delegate = self
-        itemContent.isScrollEnabled = true
-        itemContent.backgroundColor = .clear
-        itemContent.text = todoItemCellViewModel.task.title
-        contentView.addSubview(itemContent)
-        updateTextColor(isSelected: isSelected)
-
-        checkImage = CheckBox(isSelected: isSelected)
-        if let checkImage {
-            contentView.addSubview(checkImage)
-        }
-
         setupSubscriptions()
     }
 
     private func setupSubscriptions() {
         checkImage?.isSelectedUpdatedPublisher.sink { [weak self] isSelected in
-            guard let self else { return }
+            guard 
+                let self,
+                let task = self.todoItemCellViewModel?.task
+            else { return }
+
+            task.done = isSelected
 
             self.updateTextColor(isSelected: isSelected)
 
-            self.todoItemCellViewModel?.task.status = isSelected ? .Done : .Todo
-
-            DispatchQueue.main.async {
-                if let task = self.todoItemCellViewModel?.task {
-                    self.delegate?.updateTask(
-                        task: task,
-                        indexPath: self.indexPath
-                    )
-                }
-            }
-
+            self.delegate?.updateTask(
+                task: task,
+                indexPath: self.indexPath
+            )
         }.store(in: &cancellables)
     }
 
     private func updateTextColor(isSelected: Bool) {
-        itemContent.textColor = isSelected ? .red : .black
+        taskTitle.textColor = isSelected ? .red : .black
     }
 
     private func cleanUp() {
         checkImage?.isSelected = false
         checkImage = nil
-        itemContent.text = nil
+        taskTitle.text = nil
         for item in cancellables {
             item.cancel()
         }
@@ -161,7 +160,7 @@ class ToDoItemCell: UICollectionViewCell,
         itemContentFrame.origin.y = extraSmallPadding
 
         let itemContentWidth = size.width - checkImageFrame.width - deleteButtonFrame.width - (2 * extraSmallPadding)
-        let estimatedHeight = itemContent
+        let estimatedHeight = taskTitle
             .sizeThatFits(
                 CGSize(width: itemContentWidth,
                        height: size.height)
@@ -169,7 +168,7 @@ class ToDoItemCell: UICollectionViewCell,
 
         itemContentFrame.size.width = itemContentWidth
         itemContentFrame.size.height = max(Constants.minimumHeight, estimatedHeight)
-        itemContent.frame = itemContentFrame
+        taskTitle.frame = itemContentFrame
 
         return CGSize(
             width: size.width,
@@ -188,12 +187,9 @@ class ToDoItemCell: UICollectionViewCell,
     func textViewDidChange(_ textView: UITextView) {
         delegate?.reloadCollectionView()
 
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            if let todoItemCellViewModel = self.todoItemCellViewModel {
-                todoItemCellViewModel.task.title = self.itemContent.text
-                delegate?.updateTask(task: todoItemCellViewModel.task, indexPath: indexPath)
-            }
+        if let task = self.todoItemCellViewModel?.task {
+            task.title = self.taskTitle.text
+            delegate?.updateTask(task: task, indexPath: indexPath)
         }
     }
 
@@ -204,8 +200,6 @@ class ToDoItemCell: UICollectionViewCell,
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
-        guard let indexPath else { return }
-
         delegate?.animateKeyboard(up: false, indexPath: nil)
     }
 }

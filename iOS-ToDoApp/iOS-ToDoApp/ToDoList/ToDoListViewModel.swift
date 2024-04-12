@@ -6,7 +6,7 @@
 //
 
 import Combine
-import Foundation
+import CoreData
 
 protocol ReusableViewType: AnyObject {
     static var reuseID: String { get }
@@ -14,11 +14,11 @@ protocol ReusableViewType: AnyObject {
 }
 
 protocol ReusableViewModelType {
-    
+    // Place Holder to be able to refer to a general VM cell Type
 }
 
 class ToDoListViewModel {
-
+    
     // MARK: - Events
 
     var cellUpdatedPublisher: AnyPublisher<Void, Never> {
@@ -29,8 +29,7 @@ class ToDoListViewModel {
     // MARK: - Sections
 
     struct SectionVM {
-        let title: String
-        var tasks: [Task]
+        var tasks: [TodoTask]
     }
 
     enum Section {
@@ -44,16 +43,23 @@ class ToDoListViewModel {
         }
     }
 
-    var sections: [Section] = []
+    private var sections: [Section] = []
+
+    private var dataManager: CoreDataManager
 
     // MARK: - Lifecycle
 
     init() {
-        let task = Task(title: "test", status: .Todo)
-        let sectionVM = SectionVM(title: "Todo", tasks: [task])
-        let section = Section.TodoSection(sectionVM)
+        dataManager = CoreDataManager()
+        loadSavedData()
+    }
 
-        sections.append(section)
+    private func loadSavedData() {
+        if let tasks = dataManager.loadSavedData() {
+            let section = Section.TodoSection(SectionVM(tasks: tasks))
+            sections.append(section)
+            cellUpdatedSubject.send()
+        }
     }
 
     // MARK: - Section Helpers
@@ -75,7 +81,11 @@ class ToDoListViewModel {
         return sections[index]
     }
 
-    private func regenerateSection(at index: Int, updatedVM: SectionVM?, completion: (() -> Void)? = nil) {
+    private func regenerateSection(
+        at index: Int,
+        updatedVM: SectionVM?,
+        completion: (() -> Void)? = nil
+    ) {
         guard let updatedVM else { return }
 
         let updatedSection = Section.TodoSection(updatedVM)
@@ -127,7 +137,7 @@ class ToDoListViewModel {
         }) else { return }
 
 
-        let newTask = Task(title: "", status: .Todo)
+        let newTask = dataManager.createTask()
         updatedVM?.tasks.insert(newTask, at: 0)
 
         regenerateSection(
@@ -148,7 +158,10 @@ class ToDoListViewModel {
         switch section {
         case .TodoSection(let vm):
             updatedVM = vm
-            updatedVM?.tasks.remove(at: indexPath.item)
+            if let task = updatedVM?.tasks[indexPath.item] {
+                updatedVM?.tasks.remove(at: indexPath.item)
+                dataManager.deleteTask(task: task)
+            }
         }
 
         regenerateSection(
@@ -159,7 +172,7 @@ class ToDoListViewModel {
         }
     }
 
-    func updateTask(task: Task, indexPath: IndexPath?) {
+    func updateTask(task: TodoTask, indexPath: IndexPath?) {
         guard
             let indexPath,
             let section = section(at: indexPath.section)
@@ -170,6 +183,7 @@ class ToDoListViewModel {
         case .TodoSection(let vm):
             updatedVM = vm
             updatedVM?.tasks[indexPath.item] = task
+            dataManager.saveContext()
         }
 
         regenerateSection(

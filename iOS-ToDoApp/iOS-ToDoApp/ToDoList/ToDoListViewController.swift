@@ -30,9 +30,11 @@ class ToDoListViewController: UIViewController,
     // MARK: - Lifecycle
 
     init() {
+        // Collection View Layout, init, and Setup
         let layout = UICollectionViewFlowLayout()
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.scrollDirection = .vertical
+
         self.collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: layout
@@ -44,13 +46,13 @@ class ToDoListViewController: UIViewController,
         collectionView.dataSource = self
         collectionView.delegate = self
 
+        // Register Collection View Cells
         for cellType in viewModel.cellTypes {
             collectionView.register(
                 cellType,
                 forCellWithReuseIdentifier: cellType.reuseID
             )
         }
-
     }
     
     required init?(coder: NSCoder) {
@@ -62,11 +64,13 @@ class ToDoListViewController: UIViewController,
 
         view.backgroundColor = .darkGray
 
+        // Title Label Setup
         titleLabel.font = .boldSystemFont(ofSize: 24)
         titleLabel.textColor = .white
         titleLabel.text = "Todo List"
         view.addSubview(titleLabel)
 
+        // Create Button Setup
         let createImage = UIImage(
             systemName: "plus",
             withConfiguration: UIImage.SymbolConfiguration(
@@ -83,8 +87,9 @@ class ToDoListViewController: UIViewController,
         createButton.addTarget(self, action: #selector(didTapCreate), for: .touchUpInside)
         view.addSubview(createButton)
 
-        view.addSubview(collectionView)
+        // Collection View Setup
         collectionView.backgroundColor = .darkGray
+        view.addSubview(collectionView)
 
         setupSubscriptions()
     }
@@ -180,12 +185,12 @@ class ToDoListViewController: UIViewController,
 
     // MARK: - CellDelegate
 
-    func updateTask(task: Task, indexPath: IndexPath?) {
+    func updateTask(task: TodoTask, indexPath: IndexPath?) {
         viewModel.updateTask(task: task, indexPath: indexPath)
     }
 
     func deleteTask(indexPath: IndexPath?) {
-       viewModel.deleteTask(indexPath: indexPath)
+        viewModel.deleteTask(indexPath: indexPath)
     }
 
     func reloadCollectionView() {

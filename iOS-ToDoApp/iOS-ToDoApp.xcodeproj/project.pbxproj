@@ -19,8 +19,11 @@
 		1B9F5DAA2BC5E06F00666EBB /* ToDoListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9F5DA92BC5E06F00666EBB /* ToDoListViewModel.swift */; };
 		1B9F5DAC2BC5E86400666EBB /* ToDoItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9F5DAB2BC5E86400666EBB /* ToDoItemCell.swift */; };
 		1B9F5DAF2BC6031400666EBB /* CheckBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9F5DAE2BC6031400666EBB /* CheckBox.swift */; };
+		1BB087052BC8AE4B00C9B3E5 /* iOS-ToDoApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1BB087032BC8AE4B00C9B3E5 /* iOS-ToDoApp.xcdatamodeld */; };
+		1BB087082BC8AF3F00C9B3E5 /* TodoTask+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB087062BC8AF3F00C9B3E5 /* TodoTask+CoreDataClass.swift */; };
+		1BB087092BC8AF3F00C9B3E5 /* TodoTask+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB087072BC8AF3F00C9B3E5 /* TodoTask+CoreDataProperties.swift */; };
+		1BB0870E2BCC5A4D00C9B3E5 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB0870D2BCC5A4D00C9B3E5 /* CoreDataManager.swift */; };
 		1BDD16E92BC745B100A5D6A1 /* ToDoItemCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDD16E82BC745B100A5D6A1 /* ToDoItemCellViewModel.swift */; };
-		1BDD16EC2BC755E100A5D6A1 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDD16EB2BC755E100A5D6A1 /* DataModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,8 +60,11 @@
 		1B9F5DA92BC5E06F00666EBB /* ToDoListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoListViewModel.swift; sourceTree = "<group>"; };
 		1B9F5DAB2BC5E86400666EBB /* ToDoItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoItemCell.swift; sourceTree = "<group>"; };
 		1B9F5DAE2BC6031400666EBB /* CheckBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBox.swift; sourceTree = "<group>"; };
+		1BB087042BC8AE4B00C9B3E5 /* iOS-ToDoApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "iOS-ToDoApp.xcdatamodel"; sourceTree = "<group>"; };
+		1BB087062BC8AF3F00C9B3E5 /* TodoTask+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoTask+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		1BB087072BC8AF3F00C9B3E5 /* TodoTask+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoTask+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
+		1BB0870D2BCC5A4D00C9B3E5 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		1BDD16E82BC745B100A5D6A1 /* ToDoItemCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoItemCellViewModel.swift; sourceTree = "<group>"; };
-		1BDD16EB2BC755E100A5D6A1 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +115,10 @@
 		1B9F5D772BC5D8FC00666EBB /* iOS-ToDoApp */ = {
 			isa = PBXGroup;
 			children = (
+				1BB0870F2BCC5E5C00C9B3E5 /* DataManagers */,
+				1BB087062BC8AF3F00C9B3E5 /* TodoTask+CoreDataClass.swift */,
+				1BB087072BC8AF3F00C9B3E5 /* TodoTask+CoreDataProperties.swift */,
+				1BB087032BC8AE4B00C9B3E5 /* iOS-ToDoApp.xcdatamodeld */,
 				1B9F5DAD2BC6030200666EBB /* Utilities */,
 				1B9F5DA82BC5E05600666EBB /* ToDoList */,
 				1B9F5D782BC5D8FC00666EBB /* AppDelegate.swift */,
@@ -144,7 +154,6 @@
 				1BDD16EA2BC745BF00A5D6A1 /* TodoItemCells */,
 				1B9F5D7C2BC5D8FC00666EBB /* ToDoListViewController.swift */,
 				1B9F5DA92BC5E06F00666EBB /* ToDoListViewModel.swift */,
-				1BDD16EB2BC755E100A5D6A1 /* DataModel.swift */,
 			);
 			path = ToDoList;
 			sourceTree = "<group>";
@@ -155,6 +164,14 @@
 				1B9F5DAE2BC6031400666EBB /* CheckBox.swift */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		1BB0870F2BCC5E5C00C9B3E5 /* DataManagers */ = {
+			isa = PBXGroup;
+			children = (
+				1BB0870D2BCC5A4D00C9B3E5 /* CoreDataManager.swift */,
+			);
+			path = DataManagers;
 			sourceTree = "<group>";
 		};
 		1BDD16EA2BC745BF00A5D6A1 /* TodoItemCells */ = {
@@ -299,12 +316,15 @@
 			files = (
 				1B9F5DAA2BC5E06F00666EBB /* ToDoListViewModel.swift in Sources */,
 				1B9F5DAC2BC5E86400666EBB /* ToDoItemCell.swift in Sources */,
+				1BB087082BC8AF3F00C9B3E5 /* TodoTask+CoreDataClass.swift in Sources */,
+				1BB087092BC8AF3F00C9B3E5 /* TodoTask+CoreDataProperties.swift in Sources */,
+				1BB087052BC8AE4B00C9B3E5 /* iOS-ToDoApp.xcdatamodeld in Sources */,
 				1B9F5DAF2BC6031400666EBB /* CheckBox.swift in Sources */,
 				1B9F5D7D2BC5D8FC00666EBB /* ToDoListViewController.swift in Sources */,
 				1BDD16E92BC745B100A5D6A1 /* ToDoItemCellViewModel.swift in Sources */,
-				1BDD16EC2BC755E100A5D6A1 /* DataModel.swift in Sources */,
 				1B9F5D792BC5D8FC00666EBB /* AppDelegate.swift in Sources */,
 				1B9F5D7B2BC5D8FC00666EBB /* SceneDelegate.swift in Sources */,
+				1BB0870E2BCC5A4D00C9B3E5 /* CoreDataManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -645,6 +665,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		1BB087032BC8AE4B00C9B3E5 /* iOS-ToDoApp.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				1BB087042BC8AE4B00C9B3E5 /* iOS-ToDoApp.xcdatamodel */,
+			);
+			currentVersion = 1BB087042BC8AE4B00C9B3E5 /* iOS-ToDoApp.xcdatamodel */;
+			name = "iOS-ToDoApp.xcdatamodeld";
+			path = "/Users/haleykwiat/Documents/Repositories/iOS-ToDoApp/iOS-ToDoApp/iOS-ToDoApp.xcdatamodeld";
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 1B9F5D6D2BC5D8FC00666EBB /* Project object */;
 }
