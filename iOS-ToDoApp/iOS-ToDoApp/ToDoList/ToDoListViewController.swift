@@ -62,35 +62,20 @@ class ToDoListViewController: UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .darkGray
-
         // Title Label Setup
         titleLabel.font = .boldSystemFont(ofSize: 24)
-        titleLabel.textColor = .white
         titleLabel.text = "To Do List"
         view.addSubview(titleLabel)
 
         // Create Button Setup
-        let createImage = UIImage(
-            systemName: "plus",
-            withConfiguration: UIImage.SymbolConfiguration(
-                weight: .semibold
-            )
-        )?.withTintColor(
-                .white,
-                renderingMode: .alwaysOriginal
-            )
-        createButton.setImage(
-            createImage,
-            for: .normal
-        )
         createButton.addTarget(self, action: #selector(didTapCreate), for: .touchUpInside)
         createButton.accessibilityLabel = "Create to do item"
         view.addSubview(createButton)
 
         // Collection View Setup
-        collectionView.backgroundColor = .darkGray
         view.addSubview(collectionView)
+
+        themeDidChange()
 
         setupSubscriptions()
     }
@@ -145,6 +130,34 @@ class ToDoListViewController: UIViewController,
                 self.collectionView.scrollToItem(at: indexPath, at: .bottom, animated: true)
             }
         }
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        themeDidChange()
+    }
+
+    private func themeDidChange() {
+        view.backgroundColor = whiteColor
+
+        titleLabel.textColor = grayColor
+
+        let createImage = UIImage(
+            systemName: "plus",
+            withConfiguration: UIImage.SymbolConfiguration(
+                weight: .semibold
+            )
+        )?.withTintColor(
+                grayColor,
+                renderingMode: .alwaysOriginal
+            )
+        createButton.setImage(
+            createImage,
+            for: .normal
+        )
+
+        collectionView.backgroundColor = whiteColor
     }
 
     // MARK: - UICollectionViewDataSource

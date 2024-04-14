@@ -58,7 +58,7 @@ class ToDoItemCell: UICollectionViewCell,
         guard let todoItemCellViewModel else { return }
 
         layer.cornerRadius = 16.0
-        backgroundColor = .white
+        layer.borderWidth = 1.0
 
         // Check Box Setup
         checkImage = CheckBox(isSelected: todoItemCellViewModel.task.done)
@@ -70,24 +70,19 @@ class ToDoItemCell: UICollectionViewCell,
         // Task Title Setup
         taskTitle.delegate = self
         taskTitle.isScrollEnabled = true
-        taskTitle.backgroundColor = .clear
         taskTitle.text = todoItemCellViewModel.task.title
         taskTitle.accessibilityLabel = "To do text"
         contentView.addSubview(taskTitle)
 
         // Delete Button Setup
-        let deleteImage = UIImage(systemName: "trash")?
-            .withTintColor(
-                .lightGray,
-                renderingMode: .alwaysOriginal
-            )
-        deleteButton.setImage(deleteImage, for: .normal)
         deleteButton.addTarget(
             self,
             action: #selector(didTapDelete),
             for: .touchUpInside
         )
         contentView.addSubview(deleteButton)
+
+        themeDidChange()
 
         setupSubscriptions()
     }
@@ -176,6 +171,27 @@ class ToDoItemCell: UICollectionViewCell,
             height: itemContentFrame.maxY + extraSmallPadding
         )
     }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        themeDidChange()
+    }
+
+    private func themeDidChange() {
+        backgroundColor = .white
+        layer.borderColor = grayColor.cgColor
+
+        taskTitle.backgroundColor = .clear
+
+        let deleteImage = UIImage(systemName: "trash")?
+            .withTintColor(
+                .lightGray,
+                renderingMode: .alwaysOriginal
+            )
+        deleteButton.setImage(deleteImage, for: .normal)
+    }
+
 
     // MARK: - Actions
 

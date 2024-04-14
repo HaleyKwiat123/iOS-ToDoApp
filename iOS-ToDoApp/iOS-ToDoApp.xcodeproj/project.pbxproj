@@ -23,6 +23,7 @@
 		1BB087082BC8AF3F00C9B3E5 /* TodoTask+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB087062BC8AF3F00C9B3E5 /* TodoTask+CoreDataClass.swift */; };
 		1BB087092BC8AF3F00C9B3E5 /* TodoTask+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB087072BC8AF3F00C9B3E5 /* TodoTask+CoreDataProperties.swift */; };
 		1BB0870E2BCC5A4D00C9B3E5 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB0870D2BCC5A4D00C9B3E5 /* CoreDataManager.swift */; };
+		1BB087112BCC84BA00C9B3E5 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB087102BCC84BA00C9B3E5 /* Theme.swift */; };
 		1BDD16E92BC745B100A5D6A1 /* ToDoItemCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDD16E82BC745B100A5D6A1 /* ToDoItemCellViewModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -64,6 +65,7 @@
 		1BB087062BC8AF3F00C9B3E5 /* TodoTask+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoTask+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
 		1BB087072BC8AF3F00C9B3E5 /* TodoTask+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoTask+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		1BB0870D2BCC5A4D00C9B3E5 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		1BB087102BCC84BA00C9B3E5 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		1BDD16E82BC745B100A5D6A1 /* ToDoItemCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoItemCellViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -162,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				1B9F5DAE2BC6031400666EBB /* CheckBox.swift */,
+				1BB087102BCC84BA00C9B3E5 /* Theme.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -323,6 +326,7 @@
 				1B9F5D7D2BC5D8FC00666EBB /* ToDoListViewController.swift in Sources */,
 				1BDD16E92BC745B100A5D6A1 /* ToDoItemCellViewModel.swift in Sources */,
 				1B9F5D792BC5D8FC00666EBB /* AppDelegate.swift in Sources */,
+				1BB087112BCC84BA00C9B3E5 /* Theme.swift in Sources */,
 				1B9F5D7B2BC5D8FC00666EBB /* SceneDelegate.swift in Sources */,
 				1BB0870E2BCC5A4D00C9B3E5 /* CoreDataManager.swift in Sources */,
 			);
