@@ -67,7 +67,7 @@ class ToDoListViewController: UIViewController,
         // Title Label Setup
         titleLabel.font = .boldSystemFont(ofSize: 24)
         titleLabel.textColor = .white
-        titleLabel.text = "Todo List"
+        titleLabel.text = "To Do List"
         view.addSubview(titleLabel)
 
         // Create Button Setup
@@ -85,6 +85,7 @@ class ToDoListViewController: UIViewController,
             for: .normal
         )
         createButton.addTarget(self, action: #selector(didTapCreate), for: .touchUpInside)
+        createButton.accessibilityLabel = "Create to do item"
         view.addSubview(createButton)
 
         // Collection View Setup

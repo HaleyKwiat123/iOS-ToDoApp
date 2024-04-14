@@ -63,6 +63,7 @@ class ToDoItemCell: UICollectionViewCell,
         // Check Box Setup
         checkImage = CheckBox(isSelected: todoItemCellViewModel.task.done)
         if let checkImage {
+            updateTextColor(isSelected: todoItemCellViewModel.task.done)
             contentView.addSubview(checkImage)
         }
 
@@ -71,7 +72,7 @@ class ToDoItemCell: UICollectionViewCell,
         taskTitle.isScrollEnabled = true
         taskTitle.backgroundColor = .clear
         taskTitle.text = todoItemCellViewModel.task.title
-        updateTextColor(isSelected: todoItemCellViewModel.task.done)
+        taskTitle.accessibilityLabel = "To do text"
         contentView.addSubview(taskTitle)
 
         // Delete Button Setup

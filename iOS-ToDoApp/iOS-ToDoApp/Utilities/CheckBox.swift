@@ -44,6 +44,10 @@ class CheckBox: UIButton {
         self.isSelected = isSelected
 
         addTarget(self, action: #selector(didTapCheck), for: .touchUpInside)
+
+        let accessibilityDoneStatus = isSelected ? "done": "to do"
+        self.accessibilityLabel = "To do item status: \(accessibilityDoneStatus)"
+        self.accessibilityHint = "Double tap to update status"
     }
 
     required init?(coder: NSCoder) {
