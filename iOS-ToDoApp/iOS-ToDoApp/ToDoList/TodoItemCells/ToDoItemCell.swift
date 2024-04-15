@@ -11,7 +11,7 @@ import UIKit
 protocol CellDelegate: AnyObject {
     func updateTask(task: TodoTask, indexPath: IndexPath?)
     func deleteTask(indexPath: IndexPath?)
-    func animateKeyboard(up: Bool, indexPath: IndexPath?)
+    func updateIsEditing(indexPath: IndexPath?)
     func reloadCollectionView()
 }
 
@@ -172,6 +172,8 @@ class ToDoItemCell: UICollectionViewCell,
         )
     }
 
+    // MARK: - Themable
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
@@ -213,10 +215,6 @@ class ToDoItemCell: UICollectionViewCell,
     func textViewDidBeginEditing(_ textView: UITextView) {
         guard let indexPath else { return }
 
-        delegate?.animateKeyboard(up: true, indexPath: indexPath)
-    }
-
-    func textViewDidEndEditing(_ textView: UITextView) {
-        delegate?.animateKeyboard(up: false, indexPath: nil)
+        delegate?.updateIsEditing(indexPath: indexPath)
     }
 }

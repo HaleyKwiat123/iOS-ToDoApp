@@ -19,7 +19,11 @@ class ToDoListViewController: UIViewController,
 
     private var cancellables = Set<AnyCancellable>()
 
+    // MARK: - Keyboard helpers
+
     private var keyboardOffset: CGFloat = 0
+
+    private var isEditingIndexPath: IndexPath?
 
     // MARK: - UI Elements
 
@@ -86,6 +90,20 @@ class ToDoListViewController: UIViewController,
         viewModel.cellUpdatedPublisher.sink { [weak self] _ in
             self?.collectionView.reloadData()
         }.store(in: &cancellables)
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow(notification:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide(notification:)),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
     }
 
     // MARK: - Layout
@@ -116,8 +134,9 @@ class ToDoListViewController: UIViewController,
         collectionView.frame = collectionViewFrame
     }
 
-    func animateKeyboard(up: Bool, indexPath: IndexPath?) {
-        keyboardOffset = up ? 315 : 0
+    // MARK: - Keyboard
+
+    func animateKeyboard(completion: ((Bool) -> Void)? = nil) {
         UIView.animate(
             withDuration: 0.3,
             delay: 0.0,
@@ -126,13 +145,42 @@ class ToDoListViewController: UIViewController,
                 self.view.setNeedsLayout()
             }
         ){ didFinish in
-            guard didFinish else { return }
-
-            if let indexPath {
-                self.collectionView.scrollToItem(at: indexPath, at: .bottom, animated: true)
-            }
+            completion?(didFinish)
         }
     }
+
+    @objc private func keyboardWillHide(notification: Notification) {
+        // Keyboard is no longer visible so offset goes to zero
+        keyboardOffset = 0
+        animateKeyboard()
+    }
+
+    @objc private func keyboardWillShow(notification: Notification) {
+        guard
+            let keyboardFrame = notification
+                .userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
+        else { return }
+
+        // Keyboard pops up and shrinks the collection view
+        let keyboardHeight = keyboardFrame.cgRectValue.height
+        keyboardOffset = keyboardHeight
+
+        animateKeyboard() { didFinish in
+            guard didFinish else { return }
+
+            if let indexPath = self.isEditingIndexPath {
+                self.collectionView
+                    .scrollToItem(
+                        at: indexPath,
+                        at: .bottom,
+                        animated: true
+                    )
+            }
+
+        }
+    }
+
+    // MARK: - Themable
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -207,6 +255,10 @@ class ToDoListViewController: UIViewController,
 
     func deleteTask(indexPath: IndexPath?) {
         viewModel.deleteTask(indexPath: indexPath)
+    }
+
+    func updateIsEditing(indexPath: IndexPath?) {
+        self.isEditingIndexPath = indexPath
     }
 
     func reloadCollectionView() {
