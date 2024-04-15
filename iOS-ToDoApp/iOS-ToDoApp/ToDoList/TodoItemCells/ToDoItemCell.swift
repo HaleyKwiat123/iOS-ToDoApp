@@ -46,9 +46,9 @@ class ToDoItemCell: UICollectionViewCell,
 
     // MARK: - UI Elements
 
-    private var checkImage: CheckBox?
+    let taskTitle = UITextView()
 
-    private let taskTitle = UITextView()
+    private var checkImage: CheckBox?
 
     private let deleteButton = UIButton()
 
@@ -57,6 +57,7 @@ class ToDoItemCell: UICollectionViewCell,
     private func viewModelDidChange() {
         guard let todoItemCellViewModel else { return }
 
+        // Cell setup
         layer.cornerRadius = 16.0
         layer.borderWidth = 1.0
 

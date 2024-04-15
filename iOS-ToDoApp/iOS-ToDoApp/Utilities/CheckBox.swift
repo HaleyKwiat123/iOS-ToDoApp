@@ -10,10 +10,14 @@ import UIKit
 
 class CheckBox: UIButton {
 
+    // MARK: - Events
+
     var isSelectedUpdatedPublisher: AnyPublisher<Bool, Never> {
         return isSelectedUpdatedSubject.eraseToAnyPublisher()
     }
     private let isSelectedUpdatedSubject = PassthroughSubject<Bool, Never>()
+
+    // MARK: - Properites
 
     override var isSelected: Bool {
         didSet {

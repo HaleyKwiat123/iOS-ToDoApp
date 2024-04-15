@@ -7,6 +7,8 @@
 
 import UIKit
 
+// MARK: - Global Theme Properties
+
 var isDarkMode: Bool {
     return UIScreen.main.traitCollection.userInterfaceStyle == .dark
 }

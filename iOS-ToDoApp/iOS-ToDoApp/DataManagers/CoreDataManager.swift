@@ -11,7 +11,7 @@ import os
 class CoreDataManager {
 
     // A note on Core Data: This implementation of Core Data is currently all running on the main thread. This works because these operations are simple and core data is very fast.
-    // In any other scenario we would want to have most of these operations on background thread as to not block the UI. Core data is finicky with multithreaded implementations, and as this is my first core data implementation and the operations are simple I stuck to one thread.
+    // In any other scenario we would want to have most of these operations on background thread as to not block the UI. Core data is finicky with multithreaded implementations, and as this is my first core data implementation and the operations are simple, I stuck to one thread.
     // Core data in order to be multi threaded requires us to manage multiple contexts for each thread, merge these contexts when necesary and is complicated to manage and implement correctly.
     // However, I wanted to point out that had I been communicating with an external API, which is usually the case for fetching, updating and persisting data we would certainly want to run these fetch, load and update operations on a background thread. Probably using async/await as that's my current favorite implementation with background threads!
     // An example of what that might look like:  
@@ -37,6 +37,8 @@ class CoreDataManager {
     )
 
     var container: NSPersistentContainer?
+
+    // MARK: - Lifecycle
 
     init() {
         setupContainer()

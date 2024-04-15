@@ -13,6 +13,8 @@ class ToDoListViewController: UIViewController,
                               UICollectionViewDataSource,
                               UICollectionViewDelegateFlowLayout
 {
+    // MARK: - Collection View Properties
+    
     private var collectionView: UICollectionView
 
     private let viewModel = ToDoListViewModel()
@@ -24,6 +26,8 @@ class ToDoListViewController: UIViewController,
     private var keyboardOffset: CGFloat = 0
 
     private var isEditingIndexPath: IndexPath?
+
+    private var textViewReferences = [IndexPath: UITextView]()
 
     // MARK: - UI Elements
 
@@ -57,8 +61,12 @@ class ToDoListViewController: UIViewController,
                 forCellWithReuseIdentifier: cellType.reuseID
             )
         }
+
+        // Add gesture recognizer to collapse keyboard
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapView))
+        view.addGestureRecognizer(tap)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -228,6 +236,8 @@ class ToDoListViewController: UIViewController,
         (cell as? ToDoItemCell)?.delegate = self
         (cell as? ToDoItemCell)?.indexPath = indexPath
 
+        textViewReferences[indexPath] = (cell as? ToDoItemCell)?.taskTitle
+
         return cell
     }
 
@@ -269,5 +279,10 @@ class ToDoListViewController: UIViewController,
 
     @objc private func didTapCreate() {
         viewModel.addTask()
+    }
+
+    @objc private func didTapView() {
+        guard let isEditingIndexPath else { return }
+        textViewReferences[isEditingIndexPath]?.resignFirstResponder()
     }
 }
