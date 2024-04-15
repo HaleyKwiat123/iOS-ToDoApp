@@ -136,7 +136,7 @@ class ToDoListViewController: UIViewController,
 
         var collectionViewFrame = CGRect.zero
         collectionViewFrame.size.width = view.bounds.width - (2 * mediumPadding)
-        collectionViewFrame.size.height = view.bounds.height - view.safeAreaInsets.top - view.safeAreaInsets.bottom - titleLabelFrame.height - keyboardOffset
+        collectionViewFrame.size.height = view.bounds.height - view.safeAreaInsets.top - view.safeAreaInsets.bottom - titleLabelFrame.height - (2 * smallPadding) - keyboardOffset
         collectionViewFrame.origin.x = titleLabelFrame.origin.x
         collectionViewFrame.origin.y = titleLabelFrame.maxY + smallPadding
         collectionView.frame = collectionViewFrame
@@ -146,11 +146,11 @@ class ToDoListViewController: UIViewController,
 
     func animateKeyboard(completion: ((Bool) -> Void)? = nil) {
         UIView.animate(
-            withDuration: 0.3,
+            withDuration: 0.05,
             delay: 0.0,
             options: .curveEaseOut,
             animations: {
-                self.view.setNeedsLayout()
+                self.view.layoutIfNeeded()
             }
         ){ didFinish in
             completion?(didFinish)
@@ -160,6 +160,7 @@ class ToDoListViewController: UIViewController,
     @objc private func keyboardWillHide(notification: Notification) {
         // Keyboard is no longer visible so offset goes to zero
         keyboardOffset = 0
+        view.setNeedsLayout()
         animateKeyboard()
     }
 
@@ -172,6 +173,7 @@ class ToDoListViewController: UIViewController,
         // Keyboard pops up and shrinks the collection view
         let keyboardHeight = keyboardFrame.cgRectValue.height
         keyboardOffset = keyboardHeight
+        view.setNeedsLayout()
 
         animateKeyboard() { didFinish in
             guard didFinish else { return }
