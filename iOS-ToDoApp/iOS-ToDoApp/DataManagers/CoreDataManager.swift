@@ -5,29 +5,11 @@
 //  Created by Haley Kwiat on 4/14/24.
 //
 
+import Combine
 import CoreData
 import os
 
 class CoreDataManager {
-
-    // A note on Core Data: This implementation of Core Data is currently all running on the main thread. This works because these operations are simple and core data is very fast.
-    // In any other scenario we would want to have most of these operations on background thread as to not block the UI. Core data is finicky with multithreaded implementations, and as this is my first core data implementation and the operations are simple, I stuck to one thread.
-    // Core data in order to be multi threaded requires us to manage multiple contexts for each thread, merge these contexts when necesary and is complicated to manage and implement correctly.
-    // However, I wanted to point out that had I been communicating with an external API, which is usually the case for fetching, updating and persisting data we would certainly want to run these fetch, load and update operations on a background thread. Probably using async/await as that's my current favorite implementation with background threads!
-    // An example of what that might look like:  
-    //    func fetchTasks() async {
-    //      do {
-    //        if let url {
-    //            let (data, _) = try await URLSession.shared.data(from: url)
-    //            if let decodedResponse = try? JSONDecoder().decode(TodoTask.self, from: data) {
-    //                dataSubject.send(decodedResponse)
-    //            }
-    //        }
-    //    } catch {
-    //        Self.logger.error(error)
-    //    }
-    //  }
-
 
     // MARK: - Logging
 
@@ -36,7 +18,18 @@ class CoreDataManager {
         category: String(describing: ToDoListViewModel.self)
     )
 
+    // MARK: - Events
+
+    var taskPublisher: AnyPublisher<[TodoTask], Never> {
+        return taskSubject.eraseToAnyPublisher()
+    }
+    private let taskSubject = PassthroughSubject<[TodoTask], Never>()
+
+    // MARK: - Core Data Properties
+
     var container: NSPersistentContainer?
+
+    var backgroundContext: NSManagedObjectContext?
 
     // MARK: - Lifecycle
 
@@ -45,7 +38,11 @@ class CoreDataManager {
     }
 
     func setupContainer() {
+        // Create Container and Background Context
         container = NSPersistentContainer(name: "iOS-ToDoApp")
+        backgroundContext = container?.newBackgroundContext()
+        backgroundContext?.automaticallyMergesChangesFromParent = true
+
         container?.loadPersistentStores { storeDescription, error in
             if let error = error {
                 Self.logger.error("Unresolved error \(error)")
@@ -55,25 +52,40 @@ class CoreDataManager {
 
     // MARK: - Core Data Helpers
 
-    func loadSavedData() -> [TodoTask]? {
-        let request = TodoTask.createFetchRequest()
-        let sort = NSSortDescriptor(key: "date", ascending: false)
-        request.sortDescriptors = [sort]
+    func loadSavedData() async {
+        await backgroundContext?.perform { [weak self] in
+            guard let self else { return }
 
-        do {
-            let tasks = try container?.viewContext.fetch(request)
-            return tasks
-        } catch {
-            Self.logger.error("Fetch to Core Data Failed: \(error)")
+            do {
+                // Create fetch request with date sorting
+                let request = TodoTask.createFetchRequest()
+                let sort = NSSortDescriptor(key: "date", ascending: false)
+                request.sortDescriptors = [sort]
+
+                // Perform fetch and send event
+                if let tasks = try self.backgroundContext?.fetch(request) {
+                    self.taskSubject.send(tasks)
+                }
+            } catch {
+                Self.logger.error("Fetch to Core Data Failed: \(error)")
+            }
         }
-
-        return nil
     }
 
-    func saveContext() {
-        if container?.viewContext.hasChanges == true {
+    func save() {
+        Task {
+            await saveContext()
+        }
+    }
+
+    private func saveContext() async {
+        await backgroundContext?.perform { [weak self] in
+            guard let self else { return }
+
             do {
-                try container?.viewContext.save()
+                if self.backgroundContext?.hasChanges == true {
+                    try self.backgroundContext?.save()
+                }
             } catch {
                 Self.logger.error("An error occurred while saving: \(error)")
             }
@@ -81,19 +93,21 @@ class CoreDataManager {
     }
 
     func createTask() -> TodoTask? {
-        guard let context = container?.viewContext else { return nil }
-        let newTask = TodoTask(context: context)
+        guard let backgroundContext else { return nil }
+
+        let newTask = TodoTask(context: backgroundContext)
         newTask.title = ""
         newTask.done = false
         newTask.date = Date()
 
-        saveContext()
+        save()
 
         return newTask
     }
 
     func deleteTask(task: TodoTask) {
-        container?.viewContext.delete(task)
-        saveContext()
+        backgroundContext?.delete(task)
+        
+        save()
     }
 }

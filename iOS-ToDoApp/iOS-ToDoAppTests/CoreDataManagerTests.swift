@@ -5,12 +5,17 @@
 //  Created by Haley Kwiat on 4/9/24.
 //
 
+import Combine
 import XCTest
 @testable import iOS_ToDoApp
 
 final class CoreDataManagerTests: XCTestCase {
 
     private var coreDataManager: CoreDataManagerMock!
+
+    private var cancellabes = Set<AnyCancellable>()
+
+    // MARK: - Setup
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -24,6 +29,8 @@ final class CoreDataManagerTests: XCTestCase {
         coreDataManager = nil
     }
 
+    // MARK: - Tests
+
     func testCreateTask() throws {
         let task = coreDataManager.createTask()
 
@@ -35,9 +42,14 @@ final class CoreDataManagerTests: XCTestCase {
         _ = coreDataManager.createTask()
         _ = coreDataManager.createTask()
 
-        let tasks = coreDataManager.loadSavedData()
+        let expectation = expectation(description: "task fetch")
 
-        XCTAssert(tasks?.count == 2)
+        loadSavedData { tasks in
+            XCTAssert(tasks.count == 2)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 1.0)
     }
 
     func testUpdateTask() throws {
@@ -46,12 +58,18 @@ final class CoreDataManagerTests: XCTestCase {
         task?.title = "Test Title"
         task?.done = true
 
-        let tasks = coreDataManager.loadSavedData()
+        let expectation = expectation(description: "update task")
 
-        let updatedTask = tasks?.first
+        loadSavedData { tasks in
+            let updatedTask = tasks.first
 
-        XCTAssertEqual(updatedTask?.title, "Test Title")
-        XCTAssertEqual(updatedTask?.done, true)
+            XCTAssertEqual(updatedTask?.title, "Test Title")
+            XCTAssertEqual(updatedTask?.done, true)
+
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 1.0)
     }
 
     func testDeleteTask() {
@@ -61,8 +79,25 @@ final class CoreDataManagerTests: XCTestCase {
             coreDataManager.deleteTask(task: task)
         }
 
-        let tasks = coreDataManager.loadSavedData()
+        let expectation = expectation(description: "delete task")
 
-        XCTAssert(tasks?.count == 0)
+        loadSavedData { tasks in
+            XCTAssert(tasks.count == 0)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 1.0)
+    }
+
+    // MARK: - Helpers
+
+    func loadSavedData(completion: @escaping ([TodoTask]) -> Void) {
+        coreDataManager.taskPublisher.sink { tasks in
+            completion(tasks)
+        }.store(in: &cancellabes)
+
+        Task {
+            await coreDataManager.loadSavedData()
+        }
     }
 }

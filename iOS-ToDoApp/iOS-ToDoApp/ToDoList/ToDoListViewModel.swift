@@ -26,6 +26,8 @@ class ToDoListViewModel {
     }
     private let cellUpdatedSubject = PassthroughSubject<Void, Never>()
 
+    private var cancellables = Set<AnyCancellable>()
+
     // MARK: - Sections
 
     struct SectionVM {
@@ -51,15 +53,27 @@ class ToDoListViewModel {
 
     init() {
         dataManager = CoreDataManager()
-        loadSavedData()
+        setupSubscriptions()
+
+        Task {
+            await loadSavedData()
+        }
     }
 
-    private func loadSavedData() {
-        if let tasks = dataManager.loadSavedData() {
+    private func setupSubscriptions() {
+        dataManager.taskPublisher.sink { [weak self] tasks in
+            guard let self else { return }
+            
+            // When loadSavedData returns, create section and alert VC to update UI
             let section = Section.TodoSection(SectionVM(tasks: tasks))
-            sections.append(section)
-            cellUpdatedSubject.send()
-        }
+            self.sections.append(section)
+            self.cellUpdatedSubject.send()
+
+        }.store(in: &cancellables)
+    }
+
+    private func loadSavedData() async {
+        await dataManager.loadSavedData()
     }
 
     // MARK: - Section Helpers
@@ -184,7 +198,7 @@ class ToDoListViewModel {
         case .TodoSection(let vm):
             updatedVM = vm
             updatedVM?.tasks[indexPath.item] = task
-            dataManager.saveContext()
+            dataManager.save()
         }
 
         regenerateSection(
