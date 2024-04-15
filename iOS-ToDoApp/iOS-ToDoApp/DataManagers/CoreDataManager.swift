@@ -31,19 +31,22 @@ class CoreDataManager {
 
     // MARK: - Logging
 
-    private static let logger = Logger(
+    static let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: ToDoListViewModel.self)
     )
 
-    private var container: NSPersistentContainer
+    var container: NSPersistentContainer?
 
     init() {
-        // Setup Core Data
+        setupContainer()
+    }
+
+    func setupContainer() {
         container = NSPersistentContainer(name: "iOS-ToDoApp")
-        container.loadPersistentStores { storeDescription, error in
+        container?.loadPersistentStores { storeDescription, error in
             if let error = error {
-                print("Unresolved error \(error)")
+                Self.logger.error("Unresolved error \(error)")
             }
         }
     }
@@ -56,7 +59,7 @@ class CoreDataManager {
         request.sortDescriptors = [sort]
 
         do {
-            let tasks = try container.viewContext.fetch(request)
+            let tasks = try container?.viewContext.fetch(request)
             return tasks
         } catch {
             Self.logger.error("Fetch to Core Data Failed: \(error)")
@@ -66,17 +69,18 @@ class CoreDataManager {
     }
 
     func saveContext() {
-        if container.viewContext.hasChanges {
+        if container?.viewContext.hasChanges == true {
             do {
-                try container.viewContext.save()
+                try container?.viewContext.save()
             } catch {
                 Self.logger.error("An error occurred while saving: \(error)")
             }
         }
     }
 
-    func createTask() -> TodoTask {
-        let newTask = TodoTask(context: container.viewContext)
+    func createTask() -> TodoTask? {
+        guard let context = container?.viewContext else { return nil }
+        let newTask = TodoTask(context: context)
         newTask.title = ""
         newTask.done = false
         newTask.date = Date()
@@ -87,7 +91,7 @@ class CoreDataManager {
     }
 
     func deleteTask(task: TodoTask) {
-        container.viewContext.delete(task)
+        container?.viewContext.delete(task)
         saveContext()
     }
 }

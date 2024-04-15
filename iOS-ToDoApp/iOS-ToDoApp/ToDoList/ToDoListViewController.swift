@@ -64,6 +64,8 @@ class ToDoListViewController: UIViewController,
 
         // Title Label Setup
         titleLabel.font = .boldSystemFont(ofSize: 24)
+
+        // Ideally we would have this and the accessibility strings localized and potentially translated in seperate string files
         titleLabel.text = "To Do List"
         view.addSubview(titleLabel)
 

@@ -137,14 +137,15 @@ class ToDoListViewModel {
         }) else { return }
 
 
-        let newTask = dataManager.createTask()
-        updatedVM?.tasks.insert(newTask, at: 0)
-
-        regenerateSection(
-            at: index,
-            updatedVM: updatedVM
-        ) { [weak self] in
-            self?.cellUpdatedSubject.send()
+        if let newTask = dataManager.createTask() {
+            updatedVM?.tasks.insert(newTask, at: 0)
+            
+            regenerateSection(
+                at: index,
+                updatedVM: updatedVM
+            ) { [weak self] in
+                self?.cellUpdatedSubject.send()
+            }
         }
     }
 
