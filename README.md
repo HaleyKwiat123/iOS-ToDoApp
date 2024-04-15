@@ -2,9 +2,15 @@
 
 A to do list application that allows users to add, edit, and delete tasks as well as mark these tasks as completed or todo.
 
+## UI
+
+In order to create the UI for this application I used UIKit with a frame based layout, which uses superviews and CGRects to create it's own frames. This can be cumbersome with keyboard interactions, so take a moment to appreciate the beauty of the keyboard interaction in this application :). 
+
 ## Architecture
 
 This application uses MVVM to organize and architect it's different classes and methods. The ToDoListViewController is the main view controller that you will open the app to. This view controller has a ToDoListViewModel that helps manage the collection view details and the flow of data in and out of the CoreDataManager. There are also custom collection view cells  and view models ToDoItemCell and ToDoItemCellViewModel that handle the individual todo item tasks. A data manager CoreDataManager that manages the flow of data with CoreData, and some helper classes and tests.
+
+You'll notice the code creating sections, viewTypes, viewModels, etc inside the ToDoListViewModel is a little heavy for just the single section we are using it for, but the beauty of this is that is translates seamlessly to being able to add additional sections, or even headers/footers or supplementary views. Say we were to add seperate sections for Todo and Completed tasks we would be able to very easily add a section to the Section enum, a few extra case statements and perhaps a new custom cell style depending on the requirments and you would be ready to go. 
 
 ## Patterns
 
