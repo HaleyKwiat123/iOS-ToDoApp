@@ -12,7 +12,7 @@ You will see a variety of patterns used throughout this app. The delegate patter
 
 ## Data Persistance
 
-This application uses Core Data to persist TodoTask items and a simple implementation of background context to keep the heavier methods off of the main thread as to not block the UI if the data set were to get large enough.  
+This application uses Core Data to persist TodoTask items and a simple implementation of background context to keep the heavier methods off of the main thread as to not block the UI if the data set were to get large enough. This was my first experience using Core Data! 
 
 ## Accessibility
 
