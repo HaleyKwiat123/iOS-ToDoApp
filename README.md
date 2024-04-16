@@ -6,6 +6,8 @@ A to-do list application that allows users to add, edit, and delete tasks, as we
 
 I ran into an error where you may find Core Data having trouble generating the code. You can fix this by going into the main project file -> the iOS-ToDoApp Target -> Build Phases -> Compile Sources removing the iOS-ToDoApp.xcdatamodelid compile source. Then hitting the plus button under compile sources -> select add other at the bottom -> Navigating through iOS-ToDoApp -> iOS-ToDoApp -> and selecting iOS-ToDoApp.xcdatamodelid. 
 
+This should be fixed with the update I just pushed, but the steps above will fix if there are still issues. 
+
 ## UI
 
 In order to create the UI for this application I used UIKit with a frame based layout, which uses superviews and CGRects to create its own frames. This approach can be cumbersome with keyboard interactions, so please take a moment to appreciate the beauty of the keyboard interaction in this application. :) 
